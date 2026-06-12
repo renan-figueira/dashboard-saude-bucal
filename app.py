@@ -143,6 +143,7 @@ st.markdown("""
 }
 [data-testid="stHeader"] button,
 [data-testid="stHeader"] [data-testid="stSidebarCollapseButton"],
+[data-testid="stHeader"] [data-testid="collapsedControl"],
 [data-testid="stHeader"] [data-testid="collapsedSidebar"] {
     pointer-events: auto !important;
 }
@@ -150,6 +151,7 @@ st.markdown("""
 [data-testid="stHeader"] #MainMenu,
 [data-testid="stHeader"] [data-testid="stConnectionStatus"],
 [data-testid="stHeader"] [data-testid="stStatusWidget"],
+[data-testid="stHeaderActionElements"],
 [data-testid="stAppDeployButton"],
 .stAppDeployButton,
 #GithubIcon,
@@ -168,9 +170,12 @@ footer {
     display: none !important;
 }
 
-/* Destacar o botão de seta dupla (abrir/fechar barra de filtros) */
+/* Destacar o botão de seta dupla (abrir/fechar barra de filtros) em ambos os estados (aberto/fechado) */
 button[data-testid="stSidebarCollapseButton"],
 [data-testid="stSidebarCollapseButton"] button,
+button[data-testid="collapsedControl"],
+[data-testid="collapsedControl"] button,
+[data-testid="collapsedControl"],
 [data-testid="collapsedSidebar"] button {
     background-color: var(--primary-color) !important;
     color: #FFFFFF !important;
@@ -180,7 +185,7 @@ button[data-testid="stSidebarCollapseButton"],
     transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease !important;
     width: 38px !important;
     height: 38px !important;
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
@@ -189,6 +194,9 @@ button[data-testid="stSidebarCollapseButton"],
 /* Efeito de Hover/Feedback visual */
 button[data-testid="stSidebarCollapseButton"]:hover,
 [data-testid="stSidebarCollapseButton"] button:hover,
+button[data-testid="collapsedControl"]:hover,
+[data-testid="collapsedControl"] button:hover,
+[data-testid="collapsedControl"]:hover,
 [data-testid="collapsedSidebar"] button:hover {
     transform: scale(1.08) !important;
     background-color: var(--secondary-color) !important;
@@ -198,6 +206,8 @@ button[data-testid="stSidebarCollapseButton"]:hover,
 /* Forçar a cor branca do ícone SVG */
 button[data-testid="stSidebarCollapseButton"] svg,
 [data-testid="stSidebarCollapseButton"] svg,
+button[data-testid="collapsedControl"] svg,
+[data-testid="collapsedControl"] svg,
 [data-testid="collapsedSidebar"] svg {
     fill: #FFFFFF !important;
     color: #FFFFFF !important;
