@@ -133,11 +133,25 @@ else:
 # General layout overrides via CSS
 st.markdown("""
 <style>
-/* Hide Streamlit Header and Footer */
+/* Hide Streamlit Header and Footer, but keep the sidebar collapse/expand button functional */
 [data-testid="stHeader"], header {
+    background-color: transparent !important;
+    background: transparent !important;
+    border-bottom: none !important;
+    pointer-events: none;
+    z-index: 999999;
+}
+[data-testid="stHeader"] button,
+[data-testid="stHeader"] [data-testid="stSidebarCollapseButton"],
+[data-testid="stHeader"] [data-testid="collapsedSidebar"] {
+    pointer-events: auto !important;
+}
+[data-testid="stHeader"] [data-testid="stDecoration"],
+[data-testid="stHeader"] #MainMenu,
+[data-testid="stHeader"] [data-testid="stConnectionStatus"],
+[data-testid="stHeader"] [data-testid="stStatusWidget"] {
     display: none !important;
     visibility: hidden !important;
-    height: 0 !important;
 }
 #MainMenu {
     visibility: hidden !important;
@@ -443,6 +457,63 @@ div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] * {
     font-weight: 700 !important;
     color: var(--primary-color) !important;
 }
+
+/* Responsividade para cabeçalho e rodapé em telas menores */
+@media (max-width: 768px) {
+    .main-header-container {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+    .main-header-title {
+        font-size: 26px !important;
+    }
+    .main-header-icon {
+        font-size: 36px !important;
+        margin-right: 0 !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .partner-banner {
+        flex-direction: column !important;
+        text-align: center;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+    .partner-icon {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 24px !important;
+    }
+}
+
+/* Ocultar botão de filtros mobile em telas desktop */
+@media (min-width: 769px) {
+    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor),
+    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor) + div[data-testid="element-container"] {
+        display: none !important;
+    }
+}
+
+/* Estilo premium para o botão de filtros no mobile */
+@media (max-width: 768px) {
+    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor) + div[data-testid="element-container"] button {
+        background-color: var(--primary-color) !important;
+        color: #FFFFFF !important;
+        border: 1px solid var(--primary-color) !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        padding: 10px 16px !important;
+        font-size: 15px !important;
+        transition: transform 0.1s ease, box-shadow 0.2s ease !important;
+        box-shadow: var(--card-shadow) !important;
+        margin-bottom: 15px;
+    }
+    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor) + div[data-testid="element-container"] button:active {
+        transform: scale(0.97) !important;
+    }
+}
 </style>
 
 """, unsafe_allow_html=True)
@@ -539,18 +610,35 @@ else:
 
 # --- MAIN HEADER ---
 st.markdown(f"""
-<div style="display: flex; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
-    <span style="font-size: 45px; margin-right: 18px;">🦷</span>
+<div class="main-header-container" style="display: flex; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
+    <span class="main-header-icon" style="font-size: 45px; margin-right: 18px;">🦷</span>
     <div>
-        <h1 style="margin: 0; font-size: 34px; font-weight: 800; color: var(--primary-color);">
+        <h1 class="main-header-title" style="margin: 0; font-size: 34px; font-weight: 800; color: var(--primary-color);">
             Saúde Bucal Presidente Prudente
         </h1>
-        <p style="margin: 3px 0 0 0; font-size: 15px; opacity: 0.85;">
+        <p class="main-header-subtitle" style="margin: 3px 0 0 0; font-size: 15px; opacity: 0.85;">
             Painel Epidemiológico Interativo de Monitoramento Escolar
         </p>
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+# --- MOBILE FILTER BUTTON & JS TRIGGER ---
+st.markdown('<div class="mobile-filter-btn-anchor"></div>', unsafe_allow_html=True)
+if st.button("🔍 Abrir Painel de Filtros", key="open_sidebar_btn", use_container_width=True):
+    st.session_state.open_sidebar_js = True
+
+# Executa o clique via JavaScript na página pai se o botão foi clicado
+if st.session_state.get('open_sidebar_js', False):
+    st.components.v1.html("""
+        <script>
+            var button = window.parent.document.querySelector('[data-testid="stHeader"] [data-testid="stSidebarCollapseButton"], [data-testid="stHeader"] [data-testid="collapsedSidebar"], [data-testid="collapsedSidebar"]');
+            if (button) {
+                button.click();
+            }
+        </script>
+    """, height=0, width=0)
+    st.session_state.open_sidebar_js = False
 
 
 # --- NAVIGATION TABS ---
