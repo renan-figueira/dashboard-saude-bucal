@@ -149,9 +149,16 @@ st.markdown("""
 [data-testid="stHeader"] [data-testid="stDecoration"],
 [data-testid="stHeader"] #MainMenu,
 [data-testid="stHeader"] [data-testid="stConnectionStatus"],
-[data-testid="stHeader"] [data-testid="stStatusWidget"] {
+[data-testid="stHeader"] [data-testid="stStatusWidget"],
+[data-testid="stAppDeployButton"],
+.stAppDeployButton,
+#GithubIcon,
+.github-icon,
+div[class*="viewerBadge"],
+[class*="viewerBadge"] {
     display: none !important;
     visibility: hidden !important;
+    height: 0 !important;
 }
 #MainMenu {
     visibility: hidden !important;
@@ -159,6 +166,41 @@ st.markdown("""
 footer {
     visibility: hidden !important;
     display: none !important;
+}
+
+/* Destacar o botão de seta dupla (abrir/fechar barra de filtros) */
+button[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="collapsedSidebar"] button {
+    background-color: var(--primary-color) !important;
+    color: #FFFFFF !important;
+    border: 1px solid var(--primary-color) !important;
+    border-radius: 50% !important;
+    box-shadow: var(--card-shadow) !important;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease !important;
+    width: 38px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+}
+
+/* Efeito de Hover/Feedback visual */
+button[data-testid="stSidebarCollapseButton"]:hover,
+[data-testid="stSidebarCollapseButton"] button:hover,
+[data-testid="collapsedSidebar"] button:hover {
+    transform: scale(1.08) !important;
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+/* Forçar a cor branca do ícone SVG */
+button[data-testid="stSidebarCollapseButton"] svg,
+[data-testid="stSidebarCollapseButton"] svg,
+[data-testid="collapsedSidebar"] svg {
+    fill: #FFFFFF !important;
+    color: #FFFFFF !important;
 }
 
 .stApp {
@@ -488,32 +530,7 @@ div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] * {
     }
 }
 
-/* Ocultar botão de filtros mobile em telas desktop */
-@media (min-width: 769px) {
-    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor),
-    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor) + div[data-testid="element-container"] {
-        display: none !important;
-    }
-}
 
-/* Estilo premium para o botão de filtros no mobile */
-@media (max-width: 768px) {
-    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor) + div[data-testid="element-container"] button {
-        background-color: var(--primary-color) !important;
-        color: #FFFFFF !important;
-        border: 1px solid var(--primary-color) !important;
-        border-radius: 8px !important;
-        font-weight: 700 !important;
-        padding: 10px 16px !important;
-        font-size: 15px !important;
-        transition: transform 0.1s ease, box-shadow 0.2s ease !important;
-        box-shadow: var(--card-shadow) !important;
-        margin-bottom: 15px;
-    }
-    div[data-testid="element-container"]:has(.mobile-filter-btn-anchor) + div[data-testid="element-container"] button:active {
-        transform: scale(0.97) !important;
-    }
-}
 </style>
 
 """, unsafe_allow_html=True)
@@ -623,22 +640,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# --- MOBILE FILTER BUTTON & JS TRIGGER ---
-st.markdown('<div class="mobile-filter-btn-anchor"></div>', unsafe_allow_html=True)
-if st.button("🔍 Abrir Painel de Filtros", key="open_sidebar_btn", use_container_width=True):
-    st.session_state.open_sidebar_js = True
 
-# Executa o clique via JavaScript na página pai se o botão foi clicado
-if st.session_state.get('open_sidebar_js', False):
-    st.components.v1.html("""
-        <script>
-            var button = window.parent.document.querySelector('[data-testid="stHeader"] [data-testid="stSidebarCollapseButton"], [data-testid="stHeader"] [data-testid="collapsedSidebar"], [data-testid="collapsedSidebar"]');
-            if (button) {
-                button.click();
-            }
-        </script>
-    """, height=0, width=0)
-    st.session_state.open_sidebar_js = False
 
 
 # --- NAVIGATION TABS ---
