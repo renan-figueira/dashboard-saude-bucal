@@ -6,6 +6,14 @@ import folium
 from streamlit_folium import st_folium
 from folium.plugins import HeatMap
 import os
+import base64
+
+@st.cache_data
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return ""
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -509,6 +517,14 @@ div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] * {
     font-weight: 700 !important;
     color: var(--primary-color) !important;
 }
+.main-header-icon {
+    height: 150px;
+    margin-right: 18px;
+    vertical-align: middle;
+}
+span.main-header-icon {
+    font-size: 45px;
+}
 
 /* Responsividade para cabeçalho e rodapé em telas menores */
 @media (max-width: 768px) {
@@ -521,8 +537,11 @@ div[data-testid="stMetricLabel"], div[data-testid="stMetricLabel"] * {
         font-size: 26px !important;
     }
     .main-header-icon {
-        font-size: 36px !important;
+        height: 90px !important;
         margin-right: 0 !important;
+    }
+    span.main-header-icon {
+        font-size: 36px !important;
     }
 }
 
@@ -636,9 +655,17 @@ else:
 
 
 # --- MAIN HEADER ---
+if st.session_state.dark_mode:
+    logo_header_path = "brasil_sorridente_branco.png"
+else:
+    logo_header_path = "brasil_sorridente_preto.png"
+
+logo_header_base64 = get_base64_image(logo_header_path)
+logo_header_html = f'<img src="data:image/png;base64,{logo_header_base64}" class="main-header-icon">' if logo_header_base64 else '<span class="main-header-icon">🦷</span>'
+
 st.markdown(f"""
 <div class="main-header-container" style="display: flex; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
-    <span class="main-header-icon" style="font-size: 45px; margin-right: 18px;">🦷</span>
+    {logo_header_html}
     <div>
         <h1 class="main-header-title" style="margin: 0; font-size: 34px; font-weight: 800; color: var(--primary-color);">
             Saúde Bucal Presidente Prudente
@@ -906,7 +933,7 @@ with tab_odo:
         col_od1, col_od2 = st.columns(2)
         
         with col_od1:
-            st.subheader("🍰 Perfil Epidemiológico Geral")
+            st.subheader("🍩 Perfil Epidemiológico Geral")
             st.markdown("Proporção percentual de cada nível de gravidade bucal (A a F) sobre o total de exames clínicos realizados.")
             
             # Chart 1: Donut Chart for Perfil Epidemiológico
@@ -1184,7 +1211,7 @@ with tab_sobre:
     <div class="partner-banner">
         <div class="partner-icon">🤝</div>
         <div class="partner-text-container">
-            <span class="partner-label">Parceria Interinstitucional:</span> Projeto de extensão universitária desenvolvido em cooperação entre as Secretarias Municipais de Saúde e de Educação de Presidente Prudente (SP) e a UNESP-FCT. A iniciativa é orientada pelo Prof. Dr. Guilherme Aparecido Santos Aguilar.
+            <span class="partner-label">Parceria Interinstitucional:</span> Projeto de extensão universitária desenvolvido em cooperação entre as Secretarias Municipais de Saúde e de Educação de Presidente Prudente (SP) e a UNESP-FCT. A iniciativa é orientada pelo Prof. Dr. Guilherme Aparecido Santos Aguilar e realizada pelo discente Renan Figueira.
         </div>
     </div>
     """, unsafe_allow_html=True)
